@@ -1,0 +1,4 @@
+title: Uniform exponential and polynomial stability and approximation in control of a thermoelastic model
+description: The main objective of this blog is to explain by numerical experiments the difference between exponential and polynomial stability, and this, in terms of spectral properties and energy behavior. These results are in perfect agreement with our theory.
+date: 2019-07-18
+author: [NafiriS]

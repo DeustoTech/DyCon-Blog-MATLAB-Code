@@ -2,7 +2,7 @@ function examples2blog(name,varargin)
      p = inputParser;
      
      addRequired(p,'name')
-     addOptional(p,'path_documentation','/Users/jesusoroya/Documents/GitHub/DyCon-Blog')
+     addOptional(p,'path_documentation','/home/djoroya/Documentos/GitHub/DyCon-Blog')
      
      parse(p,name,varargin{:})
     

@@ -1,0 +1,423 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>main_nafiri</title><meta name="generator" content="MATLAB 9.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2019-07-18"><meta name="DC.source" content="main_nafiri.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1></h1><!--introduction--><p>The main objective of this blog is to explain numerically the difference between exponential and polynomial decay in term of energy and spectral properties. We Show also that system with polynomial decay are very  sensitive to the choice of initial data.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Model Problem</a></li><li><a href="#13">Spectral properties of thermoelastic systems</a></li><li><a href="#20">Uniform and polynomial decay of the energy</a></li><li><a href="#28">Effect of smoothness of the initial data on the rate of decay of energy</a></li><li><a href="#38">References</a></li></ul></div><h2 id="1">Model Problem</h2><p>We consider the numerical approximation of the following coupled thermoelastic wave models</p><p>$$
+\begin{equation}
+\label{eq1}
+\tag{1}
+ \left\{\begin{array}{llll}
+                      u_{tt}(x,t)- \Delta u(x,t)+\gamma\theta_x(x,t)=0\quad &amp;in\;\Omega\times(0, \infty)\\
+		      \theta_{t}(x,t)-\Delta\theta(x,t)-\gamma u_{tx}(x,t) =0\quad &amp;in\;\Omega\times(0, \infty)\\
+		      u(x,t)=0=\theta(x,t)\qquad &amp;\text{on } \partial\Omega\times(0,\infty)\\
+u(x,0)=u_{0}(x),\; u_{t}(x,0)=u_{1}(x),\; \theta(x,0)=\theta_{0}(x) \quad &amp;on \;\Omega
+                     \end{array}
+                   \right.
+\end{equation}
+$$</p><pre class="error">Error updating Text.
+
+ String scalar or character vector must have valid interpreter syntax: 
+$$ \begin{equation} \label{eq1} \tag{1}  \left\{\begin{array}{llll}                       u_{tt}(x,t)- \Delta u(x,t)+\gamma\theta_x(x,t)=0\quad &amp;in\;\Omega\times(0, \infty)\\ 		      \theta_{t}(x,t)-\Delta\theta(x,t)-\gamma u_{tx}(x,t) =0\quad &amp;in\;\Omega\times(0, \infty)\\ 		      u(x,t)=0=\theta(x,t)\qquad &amp;\text{on } \partial\Omega\times(0,\infty)\\ u(x,0)=u_{0}(x),\; u_{t}(x,0)=u_{1}(x),\; \theta(x,0)=\theta_{0}(x) \quad &amp;on \;\Omega                      \end{array}                    \right. \end{equation} $$
+</pre><p>$$
+\begin{equation}
+\label{eq2}
+\tag{2}
+ \left\{\begin{array}{llll}
+                      u_{tt}(x,t)- \Delta u(x,t)+\gamma\theta(x,t)=0\quad &amp;in\;\Omega\times(0, \infty)\\
+		      \theta_{t}(x,t)-\Delta\theta(x,t)-\gamma u_{t}(x,t) =0\quad &amp;in\;\Omega\times(0, \infty)\\
+		      u(x,t)=0=\theta(x,t)\qquad &amp;\text{on } \partial\Omega\times(0,\infty)\\
+u(x,0)=u_{0}(x),\; u_{t}(x,0)=u_{1}(x),\; \theta(x,0)=\theta_{0}(x) \quad &amp;on \;\Omega
+                     \end{array}
+                   \right.
+\end{equation} $$</p><pre class="error">Error updating Text.
+
+ String scalar or character vector must have valid interpreter syntax: 
+$$ \begin{equation} \label{eq2} \tag{2}  \left\{\begin{array}{llll}                       u_{tt}(x,t)- \Delta u(x,t)+\gamma\theta(x,t)=0\quad &amp;in\;\Omega\times(0, \infty)\\ 		      \theta_{t}(x,t)-\Delta\theta(x,t)-\gamma u_{t}(x,t) =0\quad &amp;in\;\Omega\times(0, \infty)\\ 		      u(x,t)=0=\theta(x,t)\qquad &amp;\text{on } \partial\Omega\times(0,\infty)\\ u(x,0)=u_{0}(x),\; u_{t}(x,0)=u_{1}(x),\; \theta(x,0)=\theta_{0}(x) \quad &amp;on \;\Omega                      \end{array}                    \right. \end{equation} $$
+</pre><p>where <img src="main_nafiri_eq13752947836465779354.png" alt="$u(x,t)$"> is the displacement (longitudinal or transverse, depending upon the application) at position <img src="main_nafiri_eq12428413953531653171.png" alt="$x$"> along a bounded smooth domain $\Omega\subset\mathbb{R}$ and time <img src="main_nafiri_eq12656067504604335951.png" alt="$t$"> , and <img src="main_nafiri_eq12339007859109745782.png" alt="$\theta(x,t)$"> is the temperature deviation from the reference temperature at position <img src="main_nafiri_eq12428413953531653171.png" alt="$x$"> and time <img src="main_nafiri_eq12656067504604335951.png" alt="$t$">, <img src="main_nafiri_eq07500301909979296652.png" alt="$u_0(x)$">, <img src="main_nafiri_eq00800032205265783159.png" alt="$v_0(x)$"> and <img src="main_nafiri_eq06885347010425273157.png" alt="$\theta_0(x)$"> are initial data in a suitable space. The small positive constant <img src="main_nafiri_eq17096441642737911057.png" alt="$\gamma$"> is a thermo-mechanical coupling parameter and is generally small in comparison to 1. System (\ref{eq1}) differs from system $\eqref{eq2}$ at the coupling terms, where we have replaced the strong coupling (<img src="main_nafiri_eq15762350866555463033.png" alt="$\gamma\theta_x$"> and <img src="main_nafiri_eq00386871573611551194.png" alt="$\gamma u_{tx}$">) by a weak coupling (<img src="main_nafiri_eq09605425990089395657.png" alt="$\gamma\theta$"> and <img src="main_nafiri_eq07688103183484010813.png" alt="$\gamma u_{t}$">).</p><pre class="error">Error updating Text.
+
+ String scalar or character vector must have valid interpreter syntax: 
+$\eqref{eq2}$
+</pre><pre class="error">Error updating Text.
+
+ String scalar or character vector must have valid interpreter syntax: 
+$\Omega\subset\mathbb{R}$
+</pre><p>It is well known from literature that system (\ref{eq1}) and (\ref{eq2}) are respectively exponentially and polynomially stable, see [3,7] and [5,6,9].</p><p>In this post, we will show by numerical experiments, how the coupling terms affect quantitative and qualitative properties of thermoelastic systems (\ref{eq1}) and (\ref{eq2}). These results could be found in [8,10].</p><p>To do this, we consider a semi discretization version of both systems (\ref{eq1}) and (\ref{eq2}), obtained with finite element method, which has the following form</p><p>$$
+\begin{equation}
+\label{eq3}
+\tag{3}
+ (S_i)\left\{\begin{array}{ll}
+ z'_n(t)=A_{i,n} z_n(t),\quad t\geq 0,\;n\in\mathbb{N},\;i=1,2\\
+ z_n(0)=z_{n0},\;n\in\mathbb{N}\\
+\end{array}
+\right.
+\end{equation} $$</p><pre class="error">Error updating Text.
+
+ String scalar or character vector must have valid interpreter syntax: 
+$$ \begin{equation} \label{eq3} \tag{3}  (S_i)\left\{\begin{array}{ll}  z'_n(t)=A_{i,n} z_n(t),\quad t\geq 0,\;n\in\mathbb{N},\;i=1,2\\  z_n(0)=z_{n0},\;n\in\mathbb{N}\\ \end{array} \right. \end{equation} $$
+</pre><p>where for all $n\in\mathbb{N}$, <img src="main_nafiri_eq08702208592236629270.png" alt="$z_n=(u_n,v_n,\theta_n)^T$"> is the semi discrete solution, <img src="main_nafiri_eq16707648069774610416.png" alt="$z_{n0}$"> is the discretized initial data, <img src="main_nafiri_eq17769096141043627740.png" alt="$A_{i,n}$"> the discretized dynamic and the subscript <img src="main_nafiri_eq14548924929073558347.png" alt="$\cdot_i$"> refers to system (\ref{eq1}) and (\ref{eq2}) with</p><pre class="error">Error updating Text.
+
+ String scalar or character vector must have valid interpreter syntax: 
+$n\in\mathbb{N}$
+</pre><p>$$
+\begin{align}
+A_{i,n}=\left(\begin{matrix}
+                    0 &amp; D_n &amp; 0\\
+	       -D_n &amp; 0 &amp; -\gamma F_{i,n}\\
+		    0 &amp; \gamma F_{i,n} &amp; -D_n^2
+                   \end{matrix}
+\right),\quad i=1,2
+\end{align}
+$$</p><pre class="error">Error updating Text.
+
+ String scalar or character vector must have valid interpreter syntax: 
+$$ \begin{align} A_{i,n}=\left(\begin{matrix}                     0 &amp; D_n &amp; 0\\ 	       -D_n &amp; 0 &amp; -\gamma F_{i,n}\\ 		    0 &amp; \gamma F_{i,n} &amp; -D_n^2                    \end{matrix} \right),\quad i=1,2 \end{align} $$
+</pre><p>and <img src="main_nafiri_eq00823673808538885073.png" alt="$F_{2,n}=I_n$">,</p><p>$$ \begin{align}
+D_n=\left(\begin{matrix}
+                    1 &amp;  &amp; \\
+	        &amp; \ddots &amp;  \\
+		     &amp;   &amp; n
+                   \end{matrix}
+\right),\quad (F_{1,n})_{ij}=\left\{\begin{array}{ll}
+ -\frac{4}{\pi}\frac{ij}{i^2-j^2},\quad |i-j|=\text{odd},\\
+ 0,\qquad\qquad\text{otherwise}.
+\end{array}
+\right.
+\end{align} $$</p><pre class="error">Error updating Text.
+
+ String scalar or character vector must have valid interpreter syntax: 
+$$ \begin{align} D_n=\left(\begin{matrix}                     1 &amp;  &amp; \\ 	        &amp; \ddots &amp;  \\ 		     &amp;   &amp; n                    \end{matrix} \right),\quad (F_{1,n})_{ij}=\left\{\begin{array}{ll}  -\frac{4}{\pi}\frac{ij}{i^2-j^2},\quad |i-j|=\text{odd},\\  0,\qquad\qquad\text{otherwise}. \end{array} \right. \end{align} $$
+</pre><h2 id="13">Spectral properties of thermoelastic systems</h2><p>Figure 1 and Figure 2 show how the coupling terms affect the placement of eigenvalues of the dynamic <img src="main_nafiri_eq12557431116843498680.png" alt="$A_{n}$">. In Figure 1, we see that a uniform distance between the eigenvalues and the imaginary axis is preserved, see Table 1. Another observation is that for fixed <img src="main_nafiri_eq08984225997457563733.png" alt="$n$">, the eigenvalues of higher frequency modes, in particular, the one of the <img src="main_nafiri_eq02124905565993268910.png" alt="$n^{th}$"> mode, are closer to the imaginary axis. Moreover, as the number of modes increases, these eigenvalues bend back towards the vertical line <img src="main_nafiri_eq00994213330523480040.png" alt="$\lambda=-\frac{\gamma^2}{2}$">, a fact which has been already shown in [4]. Therefore, the corresponding spectral element approximation scheme preserves the property of exponential stability.</p><p>![](extra-data/taple1.png)</p><p>![](extra-data/fig1.png) Location of the complex eigenvalues of the matrix <img src="main_nafiri_eq15577128352472586943.png" alt="$A_{1,n}$"> with the finite element method</p><pre class="codeinput">Nx = 30;
+stabexpsem(Nx);
+</pre><pre class="codeoutput">pour n=30, d=8.940629e-04
+pour n=60, d=8.941023e-04
+pour n=90, d=8.941065e-04
+pour n=120, d=8.941075e-04
+</pre><img vspace="5" hspace="5" src="main_nafiri_01.png" alt=""> <p>In Figure 2, conversely to Figure 1 where a uniform distance between the eigenvalues and the imaginary axis is preserved, we observe that, as the number of modes increases, an asymptotic behaviour appears in the neighborhood of the imaginary axis at <img src="main_nafiri_eq03111447087900328800.png" alt="$\pm\infty$">. This property is mainly related to systems with polynomial decay, see \cite{BEPS2006}.</p><p>![](extra-data/fig2.png) Location of the complex eigenvalues of the matrix <img src="main_nafiri_eq08538999605515209275.png" alt="$A_{2,n}$"> with the finite</p><pre class="codeinput">Nx = 30;
+stabpolysem(Nx);
+</pre><img vspace="5" hspace="5" src="main_nafiri_02.png" alt=""> <h2 id="20">Uniform and polynomial decay of the energy</h2><p>The discrete energy associated to system (\ref{eq3}) is given by</p><p>$$
+\begin{equation}
+\label{eq4}
+\tag{4}
+E_{i,n}(t)=\frac{1}{2}\sum_{j=1}^n\Big\{ | u_j(t)|^{2} + | v_j(t)|^{2}+ | \theta_j(t)|^{2}\Big\},\;i=1,2.
+\end{equation} $$</p><pre class="error">Error updating Text.
+
+ String scalar or character vector must have valid interpreter syntax: 
+$$ \begin{equation} \label{eq4} \tag{4} E_{i,n}(t)=\frac{1}{2}\sum_{j=1}^n\Big\{ | u_j(t)|^{2} + | v_j(t)|^{2}+ | \theta_j(t)|^{2}\Big\},\;i=1,2. \end{equation} $$
+</pre><p>The discrete energy <img src="main_nafiri_eq06750215451817055840.png" alt="$E_{1,n}$"> associated to system (ref{eq1}) decays exponentially to zero, see Figure 3, in the following sense: <img src="main_nafiri_eq15638473573355435641.png" alt="$\exists M,\alpha$"> positive constants such that</p><p>$$
+E_{1,n}(t)\leqslant Me^{-\alpha t}E_{1,n}(0),\;n\in\mathbb{N},\;t&gt;0.
+$$</p><pre class="error">Error updating Text.
+
+ String scalar or character vector must have valid interpreter syntax: 
+$$ E_{1,n}(t)\leqslant Me^{-\alpha t}E_{1,n}(0),\;n\in\mathbb{N},\;t&gt;0. $$
+</pre><p>However, the introduction of the weak coupling term in system (ref{eq1}) has changed the dynamic and consequently the behavior of energy (\ref{eq4}). In this case, we say that system (\ref{eq2}) decays polynomially to zero, see Figure 4, in the following sense: <img src="main_nafiri_eq15638473573355435641.png" alt="$\exists M,\alpha$"> positive constants such that</p><p>$$
+E_{2,n}(t)\leqslant \frac{M}{t} \vert A_{2,n} z_{n0} |^2  ; n \in \mathbb{N},\;t&gt;0.
+$$</p><pre class="error">Error updating Text.
+
+ String scalar or character vector must have valid interpreter syntax: 
+$$ E_{2,n}(t)\leqslant \frac{M}{t} \vert A_{2,n} z_{n0} |^2  ; n \in \mathbb{N},\;t&gt;0. $$
+</pre><p>![](extra-data/exp.png) Exponential decay of <img src="main_nafiri_eq08963233303562503538.png" alt="$E_{1,n}(t)$"></p><p>![](extra-data/poly.png) Polynomial decay of <img src="main_nafiri_eq17170775980745185399.png" alt="$E_{2,n}(t)$"></p><h2 id="28">Effect of smoothness of the initial data on the rate of decay of energy</h2><p>It has been shown theoretically, see [1,2], that the energy associated to system (\ref{eq2}) is very sensitive to the smoothness of its initial data. This fact, has been also observed numerically, see Figure 6. we use</p><pre class="codeinput">Nx = 100;
+FinalTime = 100;
+dt = 0.5;
+mode = 1;
+Gamma = 0.2;
+n = 100;
+k= 2;
+</pre><p>and we consider the following initial data</p><pre class="codeinput">u0=zeros(1,n);
+x = linspace(0,pi,100);
+v0=sqrt(2/pi)*sin(k*x);
+teta0=zeros(1,n);
+</pre><p>Through Figure 6, we notice that for <img src="main_nafiri_eq15812343231544344729.png" alt="$j = 1$">, the approximate energy <img src="main_nafiri_eq17170775980745185399.png" alt="$E_{2,n}(t)$"> decays to zero as the time <img src="main_nafiri_eq12656067504604335951.png" alt="$t$"> increases. Moreover, we observe that the decay rate depends strongly on <img src="main_nafiri_eq07225361342133155126.png" alt="$j$">. That is, when <img src="main_nafiri_eq07225361342133155126.png" alt="$j$"> increases, initial data are very oscillating. We say in this case that the rate of decay of the discrete energy <img src="main_nafiri_eq17170775980745185399.png" alt="$E_{2,n}(t)$"> is very sensitive to the choice of the initial data. However, the behavior of the energy assosiated to system (\ref{eq1}) remains indifferent to the smoothness of initial data when <img src="main_nafiri_eq09257888782483666540.png" alt="$n\to\infty$">, see Figure 5.</p><p>![](extra-data/fig5.png)  Exponential decay of <img src="main_nafiri_eq08963233303562503538.png" alt="$E_{1,n}(t)$"></p><p>![](extra-data/fig6.png)  Polynomial decay of <img src="main_nafiri_eq17170775980745185399.png" alt="$E_{2,n}(t)$"></p><p>To obtain the previous figures, one need only to execute the following</p><p>script:</p><pre class="codeinput">[u,v,theta,Et] = data_effect_exp(FinalTime,dt,Nx,mode,Gamma);
+<span class="comment">% AniThermalDisplacement(u,v,theta,Et)</span>
+</pre><pre class="codeinput">[u,v,theta,Et] = p1energyfem(FinalTime,dt,Nx,mode,Gamma);
+<span class="comment">% AniThermalDisplacement(u,v,theta,Et)</span>
+</pre><h2 id="38">References</h2><p>[1] A. B\' atkai, K.J. Engel, J. Pr\"uss and R. Schnaubelt, Polynomial stability of operator semigroups, Math. Nachr. 279, pp.</p><p>[2] A. Borichev and Y. Tomilov, Optimal polynomial decay of functions and operator semigroups, Math. Ann., 347(2), pp.455-478, 2010.</p><p>[3] S. W. Hansen, Exponential energy decay in a linear thermoelastic rod. J. Math. Anal. Appli.,167, pp. 429-442, 1992.</p><p>[4] F.A. Khodja, A. Benabdallah, and D. Teniou, Stability of coupled systems, Abstr. Appl. Anal. Volume 1, Number 3, 327-340, 1996.</p><p>[5] F. A. Khodja, A. Benabdallah and D. Teniou, Dynamical stabilizers and coupled systems}, ESAIM Proceeding,2, pp. 253-262, 1997.</p><p>[6] F. A. Khodja, A. Bader and A. Benabdallah, Dynamic stabilization of systems via decoupling techniques, ESAIM: COCV,4,</p><p>[7] Z. Liu and S. Zheng, Exponential stability of semigroup associated with thermoelastic system, Quart. Appl. Math, 51, pp.535-545, 1993.</p><p>[8] Z. Y. Liu and S. Zheng, Uniform exponential stability and approximation in control of a thermoelastic system, SIAM J. Control Optim. 32, pp. 1226-1246, 1994.</p><p>[9] Z. Liu and B. Rao, Characterization of polynomial decay rate for the solution of linear evolution equation. Zeitschrift  angewandte Mathematik und Physik ZAMP,56, pp. 630-644, 2005.</p><p>[10] L. Maniar and S. Nafiri, Approximation and uniform polynomial stability of C_0-semigroups,ESAIM: COCV 22, pp. 208-235, 2016.</p><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2018b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%%
+% The main objective of this blog is to explain numerically the difference between
+% exponential and polynomial decay in term of energy and spectral
+% properties. We Show also that system with polynomial decay are very
+%  sensitive to the choice of initial data.
+%%
+%% Model Problem
+% We consider the numerical approximation of the following coupled thermoelastic wave models
+%%
+% $$
+% \begin{equation}
+% \label{eq1}
+% \tag{1}
+%  \left\{\begin{array}{llll}
+%                       u_{tt}(x,t)- \Delta u(x,t)+\gamma\theta_x(x,t)=0\quad &in\;\Omega\times(0, \infty)\\
+% 		      \theta_{t}(x,t)-\Delta\theta(x,t)-\gamma u_{tx}(x,t) =0\quad &in\;\Omega\times(0, \infty)\\
+% 		      u(x,t)=0=\theta(x,t)\qquad &\text{on } \partial\Omega\times(0,\infty)\\
+% u(x,0)=u_{0}(x),\; u_{t}(x,0)=u_{1}(x),\; \theta(x,0)=\theta_{0}(x) \quad &on \;\Omega
+%                      \end{array}
+%                    \right.
+% \end{equation}
+% $$
+%%
+% $$
+% \begin{equation}
+% \label{eq2}
+% \tag{2}
+%  \left\{\begin{array}{llll}
+%                       u_{tt}(x,t)- \Delta u(x,t)+\gamma\theta(x,t)=0\quad &in\;\Omega\times(0, \infty)\\
+% 		      \theta_{t}(x,t)-\Delta\theta(x,t)-\gamma u_{t}(x,t) =0\quad &in\;\Omega\times(0, \infty)\\
+% 		      u(x,t)=0=\theta(x,t)\qquad &\text{on } \partial\Omega\times(0,\infty)\\
+% u(x,0)=u_{0}(x),\; u_{t}(x,0)=u_{1}(x),\; \theta(x,0)=\theta_{0}(x) \quad &on \;\Omega
+%                      \end{array}
+%                    \right.
+% \end{equation} $$
+%% 
+% where $u(x,t)$ is the displacement (longitudinal or transverse, depending upon the 
+% application) at position $x$ along a bounded smooth domain $\Omega\subset\mathbb{R}$ 
+% and time $t$ , and $\theta(x,t)$ is the temperature deviation from the reference 
+% temperature at position $x$ and time $t$, $u_0(x)$, $v_0(x)$ and $\theta_0(x)$ are 
+% initial data in a suitable space. The small positive constant $\gamma$ is a 
+% thermo-mechanical coupling parameter and is generally small in comparison to 1. 
+% System (\ref{eq1}) differs from system $\eqref{eq2}$ at the coupling terms, where 
+% we have replaced the strong coupling ($\gamma\theta_x$ and $\gamma u_{tx}$) by a weak 
+% coupling ($\gamma\theta$ and $\gamma u_{t}$).
+%%
+% It is well known from literature that system (\ref{eq1}) and (\ref{eq2}) are 
+% respectively exponentially and polynomially stable, see [3,7] and [5,6,9].
+%%
+% In this post, we will show by numerical experiments, how the coupling terms affect 
+% quantitative and qualitative properties of thermoelastic systems (\ref{eq1}) and 
+% (\ref{eq2}). These results could be found in [8,10].
+%%
+% To do this, we consider a semi discretization version of both systems (\ref{eq1}) and 
+% (\ref{eq2}), obtained with finite element method, which has the following form
+%%
+% $$
+% \begin{equation}
+% \label{eq3}
+% \tag{3}
+%  (S_i)\left\{\begin{array}{ll}
+%  z'_n(t)=A_{i,n} z_n(t),\quad t\geq 0,\;n\in\mathbb{N},\;i=1,2\\
+%  z_n(0)=z_{n0},\;n\in\mathbb{N}\\
+% \end{array}
+% \right.
+% \end{equation} $$
+%%
+% where for all $n\in\mathbb{N}$, $z_n=(u_n,v_n,\theta_n)^T$ is the semi discrete 
+% solution, $z_{n0}$ is the discretized initial data, $A_{i,n}$ the discretized dynamic 
+% and the subscript $\cdot_i$ refers to system (\ref{eq1}) and (\ref{eq2}) with  
+%%
+% $$
+% \begin{align}
+% A_{i,n}=\left(\begin{matrix}
+%                     0 & D_n & 0\\
+% 	       -D_n & 0 & -\gamma F_{i,n}\\
+% 		    0 & \gamma F_{i,n} & -D_n^2
+%                    \end{matrix}
+% \right),\quad i=1,2
+% \end{align}
+% $$
+%%
+% and $F_{2,n}=I_n$, 
+%%
+% $$ \begin{align}
+% D_n=\left(\begin{matrix}
+%                     1 &  & \\
+% 	        & \ddots &  \\
+% 		     &   & n
+%                    \end{matrix}
+% \right),\quad (F_{1,n})_{ij}=\left\{\begin{array}{ll}
+%  -\frac{4}{\pi}\frac{ij}{i^2-j^2},\quad |i-j|=\text{odd},\\
+%  0,\qquad\qquad\text{otherwise}.
+% \end{array}
+% \right.
+% \end{align} $$
+%
+%% Spectral properties of thermoelastic systems
+% Figure 1 and Figure 2 show how the coupling terms affect the placement of eigenvalues 
+% of the dynamic $A_{n}$. In Figure 1, we see that a uniform distance between the 
+% eigenvalues and the imaginary axis is preserved, see Table 1. Another observation is 
+% that for fixed $n$, the eigenvalues of higher frequency modes, in particular, the one 
+% of the $n^{th}$ mode, are closer to the imaginary axis. Moreover, as the number of modes 
+% increases, these eigenvalues bend back towards the vertical line 
+% $\lambda=-\frac{\gamma^2}{2}$, a fact which has been already shown in [4]. 
+% Therefore, the corresponding spectral element approximation scheme preserves the 
+% property of exponential stability.
+%%
+% ![](extra-data/taple1.png)
+%%
+% ![](extra-data/fig1.png)
+% Location of the complex eigenvalues of the matrix $A_{1,n}$ with the finite element method
+%%
+Nx = 30;
+stabexpsem(Nx);
+%%
+% In Figure 2, conversely to Figure 1 where a uniform distance between the eigenvalues 
+% and the imaginary axis is preserved, we observe that, as the number of modes increases, 
+% an asymptotic behaviour appears in the neighborhood of the imaginary axis at $\pm\infty$. 
+% This property is mainly related to systems with polynomial decay, see \cite{BEPS2006}.
+%%
+% ![](extra-data/fig2.png)
+% Location of the complex eigenvalues of the matrix $A_{2,n}$ with the finite
+%%
+Nx = 30;
+stabpolysem(Nx);
+%% Uniform and polynomial decay of the energy
+% The discrete energy associated to system (\ref{eq3}) is given by
+%%
+% $$
+% \begin{equation}
+% \label{eq4}
+% \tag{4}
+% E_{i,n}(t)=\frac{1}{2}\sum_{j=1}^n\Big\{ | u_j(t)|^{2} + | v_j(t)|^{2}+ | \theta_j(t)|^{2}\Big\},\;i=1,2.
+% \end{equation} $$
+%%
+% The discrete energy $E_{1,n}$ associated to system (ref{eq1}) decays exponentially 
+% to zero, see Figure 3, in the following sense: $\exists M,\alpha$ positive constants 
+% such that
+%%
+% $$
+% E_{1,n}(t)\leqslant Me^{-\alpha t}E_{1,n}(0),\;n\in\mathbb{N},\;t>0.
+% $$
+%%
+% However, the introduction of the weak coupling term in system (ref{eq1}) has changed 
+% the dynamic and consequently the behavior of energy (\ref{eq4}). In this case, we say 
+% that system (\ref{eq2}) decays polynomially to zero, see Figure 4, in the following 
+% sense: $\exists M,\alpha$ positive constants such that
+%%
+% $$
+% E_{2,n}(t)\leqslant \frac{M}{t} \vert A_{2,n} z_{n0} |^2  ; n \in \mathbb{N},\;t>0.
+% $$
+%%
+% ![](extra-data/exp.png)
+% Exponential decay of $E_{1,n}(t)$ 
+%%
+% ![](extra-data/poly.png)
+% Polynomial decay of $E_{2,n}(t)$ 
+%% Effect of smoothness of the initial data on the rate of decay of energy
+% It has been shown theoretically, see [1,2], that the energy 
+% associated to system (\ref{eq2}) is very sensitive to the smoothness of its initial 
+% data. This fact, has been also observed numerically, see Figure 6. 
+% we use
+%%
+Nx = 100;
+FinalTime = 100;
+dt = 0.5;
+mode = 1;
+Gamma = 0.2;
+n = 100;
+k= 2;
+%%
+% and we consider the following initial data
+%%
+u0=zeros(1,n);
+x = linspace(0,pi,100);
+v0=sqrt(2/pi)*sin(k*x); 
+teta0=zeros(1,n);
+%%
+% Through Figure 6, we notice that for $j = 1$, the approximate energy $E_{2,n}(t)$ 
+% decays to zero as the time $t$ increases. Moreover, we observe that the decay rate 
+% depends strongly on $j$. That is, when $j$ increases, initial data are very oscillating. 
+% We say in this case that the rate of decay of the discrete energy $E_{2,n}(t)$ is very 
+% sensitive to the choice of the initial data. However, the behavior of the energy 
+% assosiated to system (\ref{eq1}) remains indifferent to the smoothness of initial data 
+% when $n\to\infty$, see Figure 5.
+%%
+% ![](extra-data/fig5.png)
+%  Exponential decay of $E_{1,n}(t)$  
+%%
+% ![](extra-data/fig6.png)
+%  Polynomial decay of $E_{2,n}(t)$ 
+%%
+% To obtain the previous figures, one need only to execute the following
+%%
+% script:
+[u,v,theta,Et] = data_effect_exp(FinalTime,dt,Nx,mode,Gamma);
+% AniThermalDisplacement(u,v,theta,Et)
+%%
+[u,v,theta,Et] = p1energyfem(FinalTime,dt,Nx,mode,Gamma);
+% AniThermalDisplacement(u,v,theta,Et)
+%% References 
+% [1] A. B\' atkai, K.J. Engel, J. Pr\"uss and R. Schnaubelt, Polynomial stability of operator semigroups, Math. Nachr. 279, pp. 
+% 
+% [2] A. Borichev and Y. Tomilov, Optimal polynomial decay of functions and operator semigroups, Math. Ann., 347(2), pp.455-478, 2010.
+%  
+% [3] S. W. Hansen, Exponential energy decay in a linear thermoelastic rod. J. Math. Anal. Appli.,167, pp. 429-442, 1992.
+% 
+% [4] F.A. Khodja, A. Benabdallah, and D. Teniou, Stability of coupled systems, Abstr. Appl. Anal. Volume 1, Number 3, 327-340, 1996.
+% 
+% [5] F. A. Khodja, A. Benabdallah and D. Teniou, Dynamical stabilizers and coupled systems}, ESAIM Proceeding,2, pp. 253-262, 1997.
+% 
+% [6] F. A. Khodja, A. Bader and A. Benabdallah, Dynamic stabilization of systems via decoupling techniques, ESAIM: COCV,4, 
+% 
+% [7] Z. Liu and S. Zheng, Exponential stability of semigroup associated with thermoelastic system, Quart. Appl. Math, 51, pp.535-545, 1993.
+% 
+% [8] Z. Y. Liu and S. Zheng, Uniform exponential stability and approximation in control of a thermoelastic system, SIAM J. Control Optim. 32, pp. 1226-1246, 1994.
+% 
+% [9] Z. Liu and B. Rao, Characterization of polynomial decay rate for the solution of linear evolution equation. Zeitschrift  angewandte Mathematik und Physik ZAMP,56, pp. 630-644, 2005.
+% 
+% [10] L. Maniar and S. Nafiri, Approximation and uniform polynomial stability of C_0-semigroups,ESAIM: COCV 22, pp. 208-235, 2016.
+% 
+
+##### SOURCE END #####
+--></body></html>

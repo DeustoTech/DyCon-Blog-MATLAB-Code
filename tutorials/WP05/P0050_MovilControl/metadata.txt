@@ -1,0 +1,4 @@
+title: Movil Control strategy
+description: In this tutorial, we show the numerical implementation of movil control strategy for two dimensional heat equation
+date: 2019-10-30
+author: [JesusO]

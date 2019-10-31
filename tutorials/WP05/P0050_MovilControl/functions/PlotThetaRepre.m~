@@ -1,0 +1,18 @@
+clear;
+figure
+
+xl = linspace(0,1,500);
+
+plot(xl,thetaWP05(xl - (0.5)) - thetaWP05(xl - (0.8)),'-','LineWidth',3)
+hold on
+
+plot(xl,thetaWP05(xl - (0.5)),'--','LineWidth',2)
+
+plot(xl,thetaWP05(xl - (0.8)),'--','LineWidth',2)
+
+title('(a,b)=()')
+ylabel('')
+xlabel('x')
+xline(0.5)
+xline(0.8)
+legend({'W(x,a,b)','\Theta(x-a)','\Theta(x-b)'},'Location','northeastoutside')

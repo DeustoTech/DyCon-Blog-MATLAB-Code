@@ -1,0 +1,4 @@
+title: A numerical method for solving an age structured virus model
+description: We consider an age-structured HIV infection model with a general nonlinear infection function. The numerical method to solve this system of equation is based on the upwind method for solving hyperbolic partial differential equation and the ODEs are solving by explicit Euler method.
+author: [FriouiM]
+date: 2019-06-04
