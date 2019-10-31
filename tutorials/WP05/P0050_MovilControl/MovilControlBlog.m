@@ -16,16 +16,16 @@
 %%
 % Create the mesh variables
 clear;
-Ns = 6;
-Nt = 30;
+Ns = 15;
+Nt = 20;
 xline = linspace(-1,1,Ns);
 yline = linspace(-1,1,Ns);
 [xms,yms] = meshgrid(xline,yline);
 
 %%
 % We create the B() function 
-xwidth = 0.5;
-ywidth = 0.5;
+xwidth = 0.3;
+ywidth = 0.3;
 B = @(xms,yms,xs,ys) WinWP05(xms,xs,xwidth).*WinWP05(yms,ys,ywidth);
 Bmatrix =  @(xs,ys) [diag(reshape(B(xms,yms,xs,ys),1,Ns^2)) ;zeros(Ns^2)];
 
@@ -57,27 +57,29 @@ alphamid = 0.2;
 
 Y0 = + 2*gs(xms,yms,+0.25,+0.25,alpha) ...
      + 2*gs(xms,yms,+0.25,-0.25,alpha) ...
-     + 2*gs(xms,yms,-0.25,-0.25,alpha);
+     + 0*gs(xms,yms,-0.25,-0.25,alpha);
 %%
 surf(xms,yms,Y0);
 %%
 
 Y0 = [Y0(:) ;Y0(:)*0];
 %%
-T = 0.5;
-tspan = linspace(0,T,Nt+1);
+
 
 %%
 Ysym = sym('Y',[2*Ns^2+4 1]);
 Usym = sym('U',[Ns^2+2 1]);
-FDT = @(t,Y,U,Params) Atotal*Y+ [Bmatrix(Y(end-3),Y(end-2))*U(1:end-2) ;0; 0; U(end-1:end)];
-
+FDT = @(t,Y,U,Params) Atotal*Y+ [Bmatrix(0*Y(end-3),0*Y(end-2))*U(1:end-2) ;0; 0; U(end-1:end)];
+%
+T = 0.5;
+tspan = linspace(0,T,Nt+1);
+%
 idynammics = pde(FDT,Ysym,Usym);
-idynammics.mesh = {xline,yline};
+idynammics.mesh             = {xline,yline};
 idynammics.InitialCondition = [Y0;0;0;0;0];
 idynammics.Nt = Nt+1;
-idynammics.FinalTime = T;
-idynammics.Solver = @eulere;
+idynammics.FinalTime        = T;
+idynammics.Solver = @ode23;
 %
 [~ , Xnum_free] = solve(idynammics);
 
@@ -105,16 +107,27 @@ Ycas = opti.variable(2*Ns^2+4,Nt+1); % state trajectory
 Ucas = opti.variable(Ns^2+2,Nt+1);   % control
 
 % ---- Dynamic constraints --------
-Fcas = @(y,u) Atotal*y+ [Bmatrix(y(end-3),y(end-2))*u(1:end-2) ;0;0; u(end-1:end)]; % dx/dt = f(x,u)
-
-for k=1:Nt % loop over control intervals
-   % Euler forward method
-   x_next = Ycas(:,k) + (T/Nt)*Fcas(Ycas(:,k),Ucas(:,k)); 
-   opti.subject_to(Ycas(:,k+1)==x_next); % close the gaps
+movil = true;
+if movil 
+    Fcas = @(y,u) Atotal*y+ [Bmatrix(y(end-3),y(end-2))*u(1:end-2) ;0;0; u(end-1:end)]; % dx/dt = f(x,u)
+else
+    Fcas = @(y,u) Atotal*y+ [Bmatrix(0.7,0.7)*u(1:end-2) ;0;0; 0*u(end-1:end)]; % dx/dt = f(x,u)
 end
-
+%
+% for k=1:Nt % loop over control intervals
+%    % Euler forward method
+%    x_next = Ycas(:,k) + (T/Nt)*Fcas(Ycas(:,k),Ucas(:,k)); 
+%    opti.subject_to(Ycas(:,k+1)==x_next); % close the gaps
+%    
+% end
+for k=1:Nt % loop over control intervals
+   % Euler backward method
+   y_next = Ycas(:,k) + (T/Nt)*Fcas(Ycas(:,k+1),Ucas(:,k+1)); 
+   opti.subject_to(Ycas(:,k+1)==y_next); % close the gaps
+   
+end
 % ---- State constraints --------
-opti.subject_to(Ycas(:,1)==[Y0;0.2;0.2; 1 ;1]);
+opti.subject_to(Ycas(:,1)==[Y0 ; 0.7 ; 0.7; 0.0 ; 0.0]);
 
 % HeatCas = Ucas(1:end-4,:);
 % Max = 1e2;
@@ -123,9 +136,9 @@ opti.subject_to(Ycas(:,1)==[Y0;0.2;0.2; 1 ;1]);
 % opti.subject_to(HeatCas(:) <= 10)
 
 % ---- Optimization objective  ----------
-beta = 1e5;
-Cost = (Ycas(1:end-4,Nt+1))'*(Ycas(1:end-4,Nt+1)) + beta*sum(sum((Ucas(1:end-2,:))'*(Ucas(1:end-2,:))));
-%Cost = (Xcas(1:end-4,Nt+1))'*(Xcas(1:end-4,Nt+1));
+%beta = 1e5;
+%Cost = (Ycas(1:end-4,Nt+1))'*(Ycas(1:end-4,Nt+1)) + beta*sum(sum((Ucas(1:end-2,:))'*(Ucas(1:end-2,:))));
+Cost = (Ycas(1:end-4,Nt+1))'*(Ycas(1:end-4,Nt+1));
 
 opti.minimize(Cost); % minimizing L2 at the final time
 
